@@ -6,7 +6,8 @@ import '../../../1_domain/entities/article_entity.dart';
 import '../../../injection.dart';
 import '../../core/utils/sizes.dart';
 import '../../core/widgets/hs_circular_progress_indicator.dart';
-import 'cubit/details_cubit.dart';
+import 'details_cubit/details_cubit.dart';
+import 'favorites_cubit/favorites_cubit.dart';
 
 class DetailsPageWrapperProvider extends StatelessWidget {
   const DetailsPageWrapperProvider({super.key, required this.extra});
@@ -15,15 +16,30 @@ class DetailsPageWrapperProvider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<DetailsCubit>()..loadDetails(article: extra),
-      child: const DetailsPage(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => sl<DetailsCubit>()
+            ..loadDetails(
+              article: extra,
+            ),
+        ),
+        BlocProvider(
+          create: (context) => sl<FavoritesCubit>()
+            ..loadFavorites(
+              article: extra,
+            ),
+        ),
+      ],
+      child: DetailsPage(extra: extra),
     );
   }
 }
 
 class DetailsPage extends StatelessWidget {
-  const DetailsPage({super.key});
+  const DetailsPage({super.key, required this.extra});
+
+  final ArticleEntity extra;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +47,7 @@ class DetailsPage extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(
-          'Articles',
+          'Details',
         ),
         centerTitle: true,
         leading: BackButton(
@@ -43,6 +59,47 @@ class DetailsPage extends StatelessWidget {
             }
           },
         ),
+        actions: [
+          BlocBuilder<FavoritesCubit, FavoritesState>(
+            builder: (context, state) {
+              if (state is FavoritesInitialState) {
+                return IconButton(
+                  onPressed: () {
+                    context
+                        .read<FavoritesCubit>()
+                        .insertFavorite(article: extra);
+                  },
+                  icon: const Icon(
+                    Icons.favorite_outline,
+                  ),
+                );
+              }
+
+              if (state is FavoritesLoadingState) {
+                return IconButton(
+                  onPressed: () {},
+                  icon: const HSCircularProgressIndicator(),
+                );
+              }
+
+              if (state is FavoritesLoadedState) {
+                return IconButton(
+                  onPressed: () {
+                    context
+                        .read<FavoritesCubit>()
+                        .updateFavorite(article: extra);
+                  },
+                  icon: Icon(
+                    state.isFavorite ? Icons.favorite : Icons.favorite_outline,
+                    color: state.isFavorite ? Colors.red : null,
+                  ),
+                );
+              }
+
+              return const SizedBox.shrink();
+            },
+          ),
+        ],
       ),
       body: BlocBuilder<DetailsCubit, DetailsState>(
         builder: (context, state) {
