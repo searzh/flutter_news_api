@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../1_domain/entities/article_entity.dart';
-import '../../../core/storage/setup.dart';
+import '../../../core/storage/database_helper.dart';
 
 part 'favorites_state.dart';
 

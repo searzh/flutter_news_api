@@ -5,7 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../injection.dart';
 import '../../core/utils/sizes.dart';
-import 'cubit/sources_cubit.dart';
+import 'refresher_cubit/refresher_cubit.dart';
+import 'sources_cubit/sources_cubit.dart';
 import '../../core/widgets/hs_circular_progress_indicator.dart';
 import '../../core/widgets/hs_error_message.dart';
 import 'widgets/source_list_tile.dart';
@@ -15,8 +16,15 @@ class SourcesPageWrapperProvider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<SourcesCubit>()..sourcesRequest(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => sl<SourcesCubit>()..sourcesRequest(),
+        ),
+        BlocProvider(
+          create: (context) => sl<RefresherCubit>()..loadInitialState(),
+        ),
+      ],
       child: const SourcesPage(),
     );
   }
@@ -34,6 +42,31 @@ class SourcesPage extends StatelessWidget {
           'Sources',
         ),
         centerTitle: true,
+        actions: [
+          BlocBuilder<RefresherCubit, RefresherState>(
+            builder: (context, state) {
+              if (state is RefresherInitialState) {
+                return Switch.adaptive(
+                  value: context.read<RefresherCubit>().toggleValue.value,
+                  onChanged: (value) {
+                    context.read<RefresherCubit>().toggleService();
+                  },
+                );
+              }
+
+              if (state is RefresherLoadedState) {
+                return Switch.adaptive(
+                  value: state.value,
+                  onChanged: (value) {
+                    context.read<RefresherCubit>().toggleService();
+                  },
+                );
+              }
+
+              return const SizedBox.shrink();
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: HSSizes.medium1),
