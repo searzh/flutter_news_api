@@ -8,7 +8,7 @@ import '../../../injection.dart';
 import '../../core/utils/sizes.dart';
 import '../../core/widgets/hs_circular_progress_indicator.dart';
 import '../../core/widgets/hs_error_message.dart';
-import 'cubit/articles_cubit.dart';
+import 'articles_cubit/articles_cubit.dart';
 import 'widgets/article_list_tile.dart';
 
 class ArticlesPageWrapperProvider extends StatelessWidget {

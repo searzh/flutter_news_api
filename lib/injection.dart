@@ -9,7 +9,7 @@ import '1_domain/repositories/articles_repo.dart';
 import '1_domain/repositories/sources_repo.dart';
 import '1_domain/usecases/articles_usecases.dart';
 import '1_domain/usecases/sources_usecases.dart';
-import '2_application/pages/articles/cubit/articles_cubit.dart';
+import '2_application/pages/articles/articles_cubit/articles_cubit.dart';
 import '2_application/pages/details/details_cubit/details_cubit.dart';
 import '2_application/pages/details/favorites_cubit/favorites_cubit.dart';
 import '2_application/pages/sources/refresher_cubit/refresher_cubit.dart';
