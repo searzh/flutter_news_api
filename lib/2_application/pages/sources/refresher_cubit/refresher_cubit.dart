@@ -30,18 +30,18 @@ class RefresherCubit extends Cubit<RefresherState> {
     final service = FlutterBackgroundService();
 
     bool isRunning = await service.isRunning();
-
+    debugPrint('IOS Is Service Running? $isRunning');
     if (isRunning) {
       service.invoke('stopService');
 
       _toggleValue.value = false;
-
+      debugPrint('IOS Stop Service');
       emit(RefresherLoadedState(value: _toggleValue.value));
     } else {
       service.startService();
 
       _toggleValue.value = true;
-
+      debugPrint('IOS Start Service');
       emit(RefresherLoadedState(value: _toggleValue.value));
     }
   }
