@@ -1,4 +1,4 @@
-# Headspace Challenge
+# Flutter News Api Consumer App
 
 ### Requirements
 * flutter 3.19.5 (recommended)
